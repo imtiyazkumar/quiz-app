@@ -414,7 +414,7 @@ function App() {
                                 <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-green-400 rounded'></div> <span>Correctly question</span></div>
                             </div>
                             <div className='grid grid-cols-4 gap-5 '>
-                                {Questions.map((q, index) => (
+                                {Questions.map((_, index) => (
                                     <div key={index}
                                         className={`flex items-center justify-center w-10 h-10 border rounded-lg cursor-pointer select-none ${questionResult(Questions[index].id)}`}
                                         onClick={() => setReviewIndex(index)}>
