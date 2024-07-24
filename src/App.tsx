@@ -252,6 +252,14 @@ function App() {
         if (!g) return "bg-white"
     };
 
+    const questionResult = (questionID: string) => {
+        const g = givenAnswers.find((ans) => ans.questionId === questionID);
+        const c = CorrectAnswers.find((ans) => ans.questionId === questionID);
+        if (c?.optionId == g?.optionId) return "bg-green-400";
+        if (!g) return "bg-slate-200"
+        if (c?.optionId != g?.optionId) return "bg-red-300";
+    };
+
     const backTOHome = () => {
         setGivenAnswers([])
         setCurrentIndex(0);
@@ -260,7 +268,7 @@ function App() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-blue-100">
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-blue-100 select-none">
             <div className="w-full max-w-[1200px] p-6 bg-white rounded-lg shadow-lg">
                 {status === Status.start &&
                     <div className='flex flex-col gap-6 p-4 bg-white rounded-lg shadow-lg'>
@@ -287,7 +295,7 @@ function App() {
                     <div className='flex flex-row flex-grow w-full gap-10'>
                         <div className='flex flex-col flex-wrap w-2/3 gap-7'>
                             <h1 className="h-8 mb-4 text-2xl font-bold text-gray-800">
-                                {"Q" + (currentIndex + 1) + " "} {Questions[currentIndex].text}
+                                {"Q" + (currentIndex + 1) + " " + Questions[currentIndex].text}
                             </h1>
                             <div>
                                 <div className="mb-4 bg-gree">
@@ -295,7 +303,7 @@ function App() {
                                         <button
                                             onClick={() => handleClick({ questionId: Questions[currentIndex].id, optionId: option.id })}
                                             key={index}
-                                            className={`block w-full px-4 py-2 text-left mb-2 border-gray-300 rounded-lg border ${isOptionSelected({ questionId: Questions[currentIndex].id, optionId: option.id }) ? "bg-green-300" : "bg-gray-100 hover:bg-gray-200 "}`}
+                                            className={`block w-full px-4 py-2 text-left mb-2 border-gray-300 rounded-lg border ${isOptionSelected({ questionId: Questions[currentIndex].id, optionId: option.id }) ? "bg-green-300" : "bg-white hover:bg-gray-200 "}`}
                                         >
                                             {option.text}
                                         </button>
@@ -367,10 +375,10 @@ function App() {
                     </div>
                 }
                 {status === Status.review &&
-                    <div>
-                        {<div>
+                    <div className='flex flex-row flex-grow w-full gap-10'>
+                        {<div className='w-2/3'>
                             <h1 className="h-16 mb-4 text-2xl font-bold text-gray-800">
-                                {Questions[reviewIndex].text}
+                                {"Q" + (reviewIndex + 1) + " " + Questions[currentIndex].text}
                             </h1>
                             <h2 className={`font-medium text-red-400 skew-x-2 pb-4 ${givenAnswers.find(a => a.questionId == Questions[reviewIndex].id) && "hidden"}`}>You skipped this question</h2>
                             <div className="mb-4 bg-gree">
@@ -399,6 +407,22 @@ function App() {
                                 </button>
                             </div>
                         </div>}
+                        <div className='flex flex-col gap-6'>
+                            <div className='flex flex-col gap-2'>
+                                <div className='flex flex-row gap-4'> <div className='w-20 h-6 rounded bg-slate-200'></div> <span>Not Answered</span> </div>
+                                <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-red-300 rounded'></div> <span>Incorrectly Answered</span></div>
+                                <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-green-400 rounded'></div> <span>Correctly question</span></div>
+                            </div>
+                            <div className='grid grid-cols-4 gap-5 '>
+                                {Questions.map((q, index) => (
+                                    <div key={index}
+                                        className={`flex items-center justify-center w-10 h-10 border rounded-lg cursor-pointer select-none ${questionResult(Questions[index].id)}`}
+                                        onClick={() => setReviewIndex(index)}>
+                                        {index + 1}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
