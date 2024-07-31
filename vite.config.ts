@@ -2,8 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import checker from "vite-plugin-checker";
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  base: '/quiz-app/', // Set to your repo name if it's different
   plugins: [
     react(),
     checker({
@@ -11,5 +11,6 @@ export default defineConfig({
       eslint: {
         lintCommand: './node_modules/.bin/eslint "./src/**/*.{ts,tsx}"',
       },
-    })]
+    })
+  ],
 });

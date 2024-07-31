@@ -320,7 +320,6 @@ function App() {
                                     <button
                                         className="flex px-4 py-2 ml-auto font-semibold text-white bg-blue-500 rounded-lg shadow-md text-end hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         onClick={handle}
-                                        disabled={currentIndex >= Questions.length - 1}
                                     >
                                         {currentIndex >= Questions.length - 1 ? "Finish" : "Next Question"}
                                     </button>
