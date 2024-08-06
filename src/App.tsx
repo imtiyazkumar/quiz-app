@@ -9,7 +9,7 @@
  *
  */
 
-import React from 'react';
+import React from "react";
 
 interface QuestionType {
     id: string;
@@ -236,7 +236,7 @@ function App() {
             setStatus(Status.finish);
             setFinalScore(calculateScore(givenAnswers));
         }
-    }
+    };
 
     const isOptionSelected = (answer: AnswerType) => {
         const q = givenAnswers.find((ans) => ans.questionId === answer.questionId);
@@ -249,23 +249,23 @@ function App() {
         const c = CorrectAnswers.find((ans) => ans.questionId === selected.questionId);
         if ((c?.optionId == g?.optionId && selected.optionId == g?.optionId) || selected.optionId == c?.optionId) return "bg-green-300";
         if (c?.optionId != g?.optionId && selected.optionId == g?.optionId) return "bg-red-300";
-        if (!g) return "bg-white"
+        if (!g) return "bg-white";
     };
 
     const questionResult = (questionID: string) => {
         const g = givenAnswers.find((ans) => ans.questionId === questionID);
         const c = CorrectAnswers.find((ans) => ans.questionId === questionID);
         if (c?.optionId == g?.optionId) return "bg-green-400";
-        if (!g) return "bg-slate-200"
+        if (!g) return "bg-slate-200";
         if (c?.optionId != g?.optionId) return "bg-red-300";
     };
 
     const backTOHome = () => {
-        setGivenAnswers([])
+        setGivenAnswers([]);
         setCurrentIndex(0);
         setReviewIndex(0);
         setStatus(Status.start);
-    }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-blue-100 select-none">
@@ -351,7 +351,7 @@ function App() {
                         <div className="flex justify-between mt-4">
                             <button
                                 className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onClick={() => { setCurrentIndex(0); setStatus(Status.review) }}
+                                onClick={() => { setCurrentIndex(0); setStatus(Status.review); }}
                                 disabled={currentIndex == 0}
                             >
                                 View Answers
@@ -400,7 +400,7 @@ function App() {
                                 </button>
                                 <button
                                     className="px-4 py-2 ml-auto font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    onClick={() => { reviewIndex >= Questions.length - 1 ? backTOHome() : setReviewIndex(reviewIndex + 1) }}
+                                    onClick={() => { reviewIndex >= Questions.length - 1 ? backTOHome() : setReviewIndex(reviewIndex + 1); }}
                                 >
                                     {reviewIndex >= Questions.length - 1 ? "Back to Home" : "Next Question"}
                                 </button>
