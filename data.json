@@ -1,0 +1,108 @@
+{
+    "quiz-app": {
+        "quizzes": {
+            "quiz1": {
+                "title": "JavaScript Basics",
+                "description": "Test your knowledge on JavaScript fundamentals.",
+                "questions": [
+                    "question1",
+                    "question2"
+                ],
+                "createdBy": "user1"
+            },
+            "quiz2": {
+                "title": "Advanced JavaScript",
+                "description": "Deep dive into advanced JavaScript topics.",
+                "questions": [
+                    "question2",
+                    "question3"
+                ],
+                "createdBy": "user2"
+            }
+        },
+        "questions": {
+            "question1": {
+                "questionText": "What is the output of '2' + 2 in JavaScript?",
+                "options": {
+                    "option1": "4",
+                    "option2": "22",
+                    "option3": "NaN",
+                    "option4": "Error"
+                },
+                "createdBy": "user1"
+            },
+            "question2": {
+                "questionText": "Which company developed JavaScript?",
+                "options": {
+                    "option1": "Microsoft",
+                    "option2": "Google",
+                    "option3": "Netscape",
+                    "option4": "Oracle"
+                },
+                "createdBy": "user2"
+            },
+            "question3": {
+                "questionText": "What is the output of 1 + '1' in JavaScript?",
+                "options": {
+                    "option1": "2",
+                    "option2": "11",
+                    "option3": "NaN",
+                    "option4": "Error"
+                },
+                "createdBy": "user1"
+            }
+        },
+        "correctAnswers": {
+            "question1": "option2",
+            "question2": "option3",
+            "question3": "option2"
+        },
+        "users": {
+            "user1": {
+                "name": "John Doe",
+                "email": "john.doe@example.com",
+                "attemptedQuizzes": [
+                    "quiz1",
+                    "quiz2"
+                ]
+            },
+            "user2": {
+                "name": "Jane Smith",
+                "email": "jane.smith@example.com",
+                "attemptedQuizzes": [
+                    "quiz1"
+                ]
+            }
+        },
+        "completedQuizzes": {
+            "user1": {
+                "quiz1": {
+                    "timestamp": "2024-08-01T12:00:00Z",
+                    "givenAnswers": {
+                        "question1": "option2",
+                        "question2": "option3"
+                    },
+                    "score": 80
+                },
+                "quiz2": {
+                    "timestamp": "2024-08-02T15:00:00Z",
+                    "givenAnswers": {
+                        "question2": "option3",
+                        "question3": "option2"
+                    },
+                    "score": 90
+                }
+            },
+            "user2": {
+                "quiz1": {
+                    "timestamp": "2024-08-03T14:00:00Z",
+                    "givenAnswers": {
+                        "question1": "option1",
+                        "question2": "option2"
+                    },
+                    "score": 70
+                }
+            }
+        }
+    }
+}

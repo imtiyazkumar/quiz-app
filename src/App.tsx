@@ -10,6 +10,9 @@
  */
 
 import React from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+
 
 interface QuestionType {
     id: string;
@@ -267,6 +270,28 @@ function App() {
         setStatus(Status.start);
     };
 
+    const email = "iamtestcing@example.com";
+
+    const password = "Testpass";
+
+    const handlesignup = () => {
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed up 
+                const user = userCredential.user;
+                console.log(user);
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+                // ..
+            });
+    };
+
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-blue-100 select-none">
             <div className="w-full max-w-[1200px] p-6 bg-white rounded-lg shadow-lg">
@@ -288,6 +313,13 @@ function App() {
                             onClick={() => setStatus(Status.inProgress)}
                         >
                             Start
+                        </button>
+
+                        <button
+                            className="px-6 py-3 font-bold text-white transition-colors duration-300 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                            onClick={handlesignup}
+                        >
+                            Signup
                         </button>
                     </div>
                 }
