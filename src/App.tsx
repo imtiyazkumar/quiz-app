@@ -1,4 +1,18 @@
-import React from 'react';
+/**
+ * Project Quiz App
+ *
+ * @author      Imtiyaz Ahmad
+ * @copyright   Imtiyaz Ahmad.
+ *
+ * Built Imtiyaz Ahmad.
+ * @link https://www.linkedin.com/in/imtiyaz-kumar/
+ *
+ */
+
+import React from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+
 
 interface QuestionType {
     id: string;
@@ -157,8 +171,18 @@ const Questions: QuestionType[] = [
     }
 ];
 
+const Instruction = [
+    `This test consists of ${Questions.length} questions.`,
+    "Each question carries equal marks.",
+    "Each question carry equal marks.",
+    "1 mark will be awarded for every correct answer.",
+    "0 mark will be awarded for every incorrect or unattempted answer.",
+    "You must answer at least 7 questions correctly to pass this test."
+];
+
 
 function App() {
+
     enum Status {
         start = "Start",
         inProgress = "InProgress",
@@ -166,13 +190,10 @@ function App() {
         review = "Review",
     }
 
-    const [currentIndex, setCurrentIndex] = React.useState(0);
+    const [currentIndex, setCurrentIndex] = React.useState<number>(0);
     const [reviewIndex, setReviewIndex] = React.useState(0);
-
     const [status, setStatus] = React.useState<Status>(Status.start);
     const [finalScore, setFinalScore] = React.useState(0);
-
-
     const [givenAnswers, setGivenAnswers] = React.useState<AnswerType[]>([]);
 
     const calculateScore = (givenAnswers: AnswerType[]) => {
@@ -218,7 +239,7 @@ function App() {
             setStatus(Status.finish);
             setFinalScore(calculateScore(givenAnswers));
         }
-    }
+    };
 
     const isOptionSelected = (answer: AnswerType) => {
         const q = givenAnswers.find((ans) => ans.questionId === answer.questionId);
@@ -231,60 +252,127 @@ function App() {
         const c = CorrectAnswers.find((ans) => ans.questionId === selected.questionId);
         if ((c?.optionId == g?.optionId && selected.optionId == g?.optionId) || selected.optionId == c?.optionId) return "bg-green-300";
         if (c?.optionId != g?.optionId && selected.optionId == g?.optionId) return "bg-red-300";
-        if (!g) return "bg-white"
+        if (!g) return "bg-white";
+    };
+
+    const questionResult = (questionID: string) => {
+        const g = givenAnswers.find((ans) => ans.questionId === questionID);
+        const c = CorrectAnswers.find((ans) => ans.questionId === questionID);
+        if (c?.optionId == g?.optionId) return "bg-green-400";
+        if (!g) return "bg-slate-200";
+        if (c?.optionId != g?.optionId) return "bg-red-300";
     };
 
     const backTOHome = () => {
-        setGivenAnswers([])
+        setGivenAnswers([]);
         setCurrentIndex(0);
         setReviewIndex(0);
         setStatus(Status.start);
-    }
+    };
+
+    const email = "iamtestcing@example.com";
+
+    const password = "Testpass";
+
+    const handlesignup = () => {
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed up 
+                const user = userCredential.user;
+                console.log(user);
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode, errorMessage);
+                // ..
+            });
+    };
+
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-blue-100">
-            <div className="w-full max-w-[700px] p-6 bg-white rounded-lg shadow-lg">
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-blue-100 select-none">
+            <div className="w-full max-w-[1200px] p-6 bg-white rounded-lg shadow-lg">
                 {status === Status.start &&
-                    <div className='flex flex-col gap-4'>
-                        <span className='text-3xl font-semibold'>Ready for the quiz?</span>
+                    <div className='flex flex-col gap-6 p-4 bg-white rounded-lg shadow-lg'>
+                        <div className='flex flex-col gap-4'>
+                            <span className='text-4xl font-bold text-center text-gray-800'>Ready for the quiz?</span>
+                            <div className='flex flex-col p-4 bg-red-100 border-l-4 border-red-500 rounded'>
+                                <span className='text-2xl font-semibold text-red-600'>Please read the instructions before you start:</span>
+                                {Instruction.map((i, index) => (
+                                    <div key={index} className='py-1 text-lg font-medium text-gray-700'>
+                                        {`${index + 1}. ${i}`}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                         <button
-                            className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="px-6 py-3 font-bold text-white transition-colors duration-300 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
                             onClick={() => setStatus(Status.inProgress)}
-                        >Start
+                        >
+                            Start
+                        </button>
+
+                        <button
+                            className="px-6 py-3 font-bold text-white transition-colors duration-300 bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                            onClick={handlesignup}
+                        >
+                            Signup
                         </button>
                     </div>
                 }
                 {status === Status.inProgress &&
-                    <div>
-                        <h1 className="h-16 mb-4 text-2xl font-bold text-gray-800">
-                            {Questions[currentIndex].text}
-                        </h1>
-                        <div className="mb-4 bg-gree">
-                            {Questions[currentIndex].options.map((option, index) => (
-                                <button
-                                    onClick={() => handleClick({ questionId: Questions[currentIndex].id, optionId: option.id })}
-                                    key={index}
-                                    className={`block w-full px-4 py-2 text-left mb-2 border-gray-300 rounded-lg border ${isOptionSelected({ questionId: Questions[currentIndex].id, optionId: option.id }) ? "bg-green-300" : "bg-gray-100 hover:bg-gray-200 "}`}
-                                >
-                                    {option.text}
-                                </button>
-                            ))}
+                    <div className='flex flex-row flex-grow w-full gap-10'>
+                        <div className='flex flex-col flex-wrap w-2/3 gap-7'>
+                            <h1 className="h-8 mb-4 text-2xl font-bold text-gray-800">
+                                {"Q" + (currentIndex + 1) + " " + Questions[currentIndex].text}
+                            </h1>
+                            <div>
+                                <div className="mb-4 bg-gree">
+                                    {Questions[currentIndex].options.map((option, index) => (
+                                        <button
+                                            onClick={() => handleClick({ questionId: Questions[currentIndex].id, optionId: option.id })}
+                                            key={index}
+                                            className={`block w-full px-4 py-2 text-left mb-2 border-gray-300 rounded-lg border ${isOptionSelected({ questionId: Questions[currentIndex].id, optionId: option.id }) ? "bg-green-300" : "bg-white hover:bg-gray-200 "}`}
+                                        >
+                                            {option.text}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex justify-between mt-4">
+                                    <button
+                                        className={`px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 ${currentIndex == 0 && "hidden"}`}
+                                        onClick={() => setCurrentIndex(currentIndex - 1)}
+                                        disabled={currentIndex == 0}
+                                    >
+                                        Prev Question
+                                    </button>
+                                    <button
+                                        className="flex px-4 py-2 ml-auto font-semibold text-white bg-blue-500 rounded-lg shadow-md text-end hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        onClick={handle}
+                                    >
+                                        {currentIndex >= Questions.length - 1 ? "Finish" : "Next Question"}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex justify-between mt-4">
-                            <button
-                                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onClick={() => setCurrentIndex(currentIndex - 1)}
-                                disabled={currentIndex == 0}
-                            >
-                                Prev Question
-                            </button>
-                            <button
-                                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onClick={handle}
-                                disabled={currentIndex >= Questions.length - 1}
-                            >
-                                {currentIndex >= Questions.length - 1 ? "Finish" : "Next Question"}
-                            </button>
+                        <div className='flex flex-col gap-6'>
+                            <div className='flex flex-col gap-2'>
+                                <div className='flex flex-row gap-4'> <div className='w-20 h-6 rounded bg-slate-200'></div> <span>Not Answered question</span> </div>
+                                <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-orange-300 rounded'></div> <span>Current question</span></div>
+                                <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-green-400 rounded'></div> <span>Answered question</span></div>
+                            </div>
+                            <div className='grid grid-cols-4 gap-5 '>
+                                {Questions.map((q, index) => (
+                                    <div key={index}
+                                        className={`flex items-center justify-center w-10 h-10 border rounded-lg cursor-pointer select-none ${index == currentIndex ? "bg-orange-300" : givenAnswers.find(a => a.questionId == q.id) ? "bg-green-400" : "bg-slate-200"}`}
+                                        onClick={() => setCurrentIndex(index)}>
+                                        {index + 1}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 }
@@ -292,31 +380,38 @@ function App() {
                     <div>
                         <span className='text-3xl font-semibold'>your score is {finalScore}/{Questions.length}</span><br></br>
                         <span className='text-2xl'>your performance is <span className={`${finalScore / Questions.length > 0.6 ? "text-green-600" : "text-red-600"}`}> {finalScore / Questions.length > 0.6 ? "good" : "poor"}</span></span>
-
                         <div className="flex justify-between mt-4">
                             <button
                                 className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onClick={() => { setCurrentIndex(0); setStatus(Status.review) }}
+                                onClick={() => { setCurrentIndex(0); setStatus(Status.review); }}
                                 disabled={currentIndex == 0}
                             >
                                 View Answers
                             </button>
                             <button
                                 className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onClick={() => { setCurrentIndex(0); setStatus(Status.inProgress) }}
+                                onClick={() => { setCurrentIndex(0); setStatus(Status.inProgress); setGivenAnswers([]); }}
                                 disabled={currentIndex >= Questions.length - 1}
                             >
                                 Re attempt
+                            </button>
+                            <button
+                                className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                onClick={backTOHome}
+                                disabled={currentIndex >= Questions.length - 1}
+                            >
+                                Back to Home
                             </button>
                         </div>
                     </div>
                 }
                 {status === Status.review &&
-                    <div>
-                        {<div>
+                    <div className='flex flex-row flex-grow w-full gap-10'>
+                        {<div className='w-2/3'>
                             <h1 className="h-16 mb-4 text-2xl font-bold text-gray-800">
-                                {Questions[reviewIndex].text}
+                                {"Q" + (reviewIndex + 1) + " " + Questions[currentIndex].text}
                             </h1>
+                            <h2 className={`font-medium text-red-400 skew-x-2 pb-4 ${givenAnswers.find(a => a.questionId == Questions[reviewIndex].id) && "hidden"}`}>You skipped this question</h2>
                             <div className="mb-4 bg-gree">
                                 {Questions[reviewIndex].options.map((option, index) => (
                                     <div
@@ -329,24 +424,40 @@ function App() {
                             </div>
                             <div className="flex justify-between mt-4">
                                 <button
-                                    className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className={`px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 ${reviewIndex == 0 && "hidden"}`}
                                     onClick={() => setReviewIndex(reviewIndex - 1)}
                                     disabled={reviewIndex == 0}
                                 >
                                     Prev Question
                                 </button>
                                 <button
-                                    className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    onClick={() => { reviewIndex >= Questions.length - 1 ? backTOHome() : setReviewIndex(reviewIndex + 1) }}
+                                    className="px-4 py-2 ml-auto font-semibold text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    onClick={() => { reviewIndex >= Questions.length - 1 ? backTOHome() : setReviewIndex(reviewIndex + 1); }}
                                 >
                                     {reviewIndex >= Questions.length - 1 ? "Back to Home" : "Next Question"}
                                 </button>
                             </div>
                         </div>}
+                        <div className='flex flex-col gap-6'>
+                            <div className='flex flex-col gap-2'>
+                                <div className='flex flex-row gap-4'> <div className='w-20 h-6 rounded bg-slate-200'></div> <span>Not Answered</span> </div>
+                                <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-red-300 rounded'></div> <span>Incorrectly Answered</span></div>
+                                <div className='flex flex-row gap-4'><div className='w-20 h-6 bg-green-400 rounded'></div> <span>Correctly question</span></div>
+                            </div>
+                            <div className='grid grid-cols-4 gap-5 '>
+                                {Questions.map((_, index) => (
+                                    <div key={index}
+                                        className={`flex items-center justify-center w-10 h-10 border rounded-lg cursor-pointer select-none ${questionResult(Questions[index].id)}`}
+                                        onClick={() => setReviewIndex(index)}>
+                                        {index + 1}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
-        </div>
+        </div >
     );
 }
 
